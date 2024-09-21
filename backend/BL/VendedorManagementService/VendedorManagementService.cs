@@ -7,7 +7,6 @@ namespace BL.VendedorManagementService
 {
     public class VendedorManagementService : IVendedorManagementService
     {
-        //private readonly OperativeDBContext _db;
 
         public VendedorManagementService()
         {

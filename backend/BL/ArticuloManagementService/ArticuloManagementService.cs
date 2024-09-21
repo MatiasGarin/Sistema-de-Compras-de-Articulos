@@ -7,7 +7,6 @@ namespace BL.ArticuloManagementService
 {
     public class ArticuloManagementService : IArticuloManagementService
     {
-        //private readonly OperativeDBContext _db;
 
         public ArticuloManagementService()
         {
