@@ -1,3 +1,5 @@
+using BL.PedidoManagementService;
+using Common.DTO_IN;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -6,28 +8,24 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class PedidoController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly IPedidoManagementService _pedidoManagementService;
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public PedidoController(ILogger<WeatherForecastController> logger)
+        public PedidoController(IPedidoManagementService pedidoManagementService)
         {
-            _logger = logger;
+            _pedidoManagementService = pedidoManagementService;
         }
 
-        [HttpGet(Name = "GetPedido")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpPost(Name = "ValidarPedido")]
+        public ActionResult ValidarPedido([FromForm] PedidoDTO_IN dtoIn)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            try
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                return Ok(_pedidoManagementService.ValidarPedido(dtoIn));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

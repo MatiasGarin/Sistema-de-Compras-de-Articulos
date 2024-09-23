@@ -1,6 +1,5 @@
 using BL.ArticuloManagementService;
 using BL.PedidoManagementService;
-using BL.PedidoManagmentService;
 using BL.VendedorManagementService;
 
 var builder = WebApplication.CreateBuilder(args);

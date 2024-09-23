@@ -1,10 +1,10 @@
-
 <div>
-  <div class="container mt-4">
-    <h2>Listado de Artículos</h2>
-    
-    <div class="form-group mb-3">
+  <div class="p-4">
+    <h2 mat-card-title>Listado de Artículos</h2>
+
+    <div mat-typography class="form-group mb-3">
       <label for="vendedor">Seleccionar Vendedor:</label>
+
       <select id="vendedor" class="form-control" [(ngModel)]="vendedorSeleccionado">
         <option [value]="null">Seleccione un vendedor</option>
         <option *ngFor="let vendedor of vendedores" [value]="vendedor.id">
@@ -12,6 +12,7 @@
         </option>
       </select>
     </div>
+
 
     <table class="table table-striped">
       <thead>
@@ -26,7 +27,7 @@
       <tbody>
         <tr *ngFor="let articulo of articulos">
           <td>
-            <input type="checkbox">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="articulo.seleccionado">          
           </td>
           <td>{{ articulo.codigo }}</td>
           <td>{{ articulo.descripcion }}</td>
@@ -36,7 +37,12 @@
       </tbody>
     </table>
 
-    <button class="btn btn-primary" (click)="procesarSeleccionados()">Procesar Seleccionados</button>
+    <div class="text-center">
+      <span *ngIf="mostrarError" class="text-center text-danger">Debe seleccionar un vendedor y mas de un articulo para validar el pedido.</span>
+    </div>
+    <div class="text-center mt-2">
+      <button class="btn btn-primary" (click)="procesarSeleccionados()">Validar Pedido</button>
+    </div>
   </div>
 </div>
 

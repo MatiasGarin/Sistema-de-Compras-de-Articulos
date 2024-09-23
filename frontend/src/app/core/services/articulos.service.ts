@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ApiGenericService,
-  ApiMultipartService,
-  ApiService,
-} from './api.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ENDPOINTS } from '../constants/endpoints';
 import { map } from 'rxjs';
 import { ArticuloDTO_OUT } from '../models/articulo';
@@ -12,24 +7,36 @@ import { ArticuloDTO_OUT } from '../models/articulo';
 @Injectable({
   providedIn: 'root',
 })
-export class ArticuloService extends ApiGenericService {
+export class ArticuloService {
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json; charset=utf-8',
+      'X-Content-Type-Options': 'NOSNIFF',
+      'X-Frame-Options': 'SAMEORIGIN',
+      'X-Permitted-Cross-Domain-Policies': 'master-only',
+      'X-XSS-Protection': '1;mode=block',
+      'Access-Control-Allow-Origin': '*',
+      'Referrer-Policy': 'strict-origin',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    }),
+  };
+
   constructor(
     private httpClient: HttpClient,
-    private apiService: ApiService,
   ) {
-    super(httpClient, ENDPOINTS.URL_LOCAL, ENDPOINTS.ARTICULO);
   }
 
-  async getAllArticulos(): Promise<ArticuloDTO_OUT[]> {
-    return await this.apiService
-      .get<any>(ENDPOINTS.URL_LOCAL, ENDPOINTS.ARTICULO)
+  public getAllArticulos<T>(): Promise<ArticuloDTO_OUT[]> {
+    let url = `${ENDPOINTS.URL_LOCAL}${ENDPOINTS.ARTICULO}`;
+    return this.httpClient
+      .get<any>(url, this.httpOptions)
       .pipe(
         map((response) => {
-          if (response) {
-            // console.log("response: ",response);
+          // console.log('Response from API:', response);
+          if (!response.isError) {
             return response;
           }
-          return null;
+          return response.responseException;
         })
       )
       .toPromise();

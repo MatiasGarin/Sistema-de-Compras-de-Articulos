@@ -1,30 +1,48 @@
 ﻿using BL.PedidoManagementService;
+using Common.DTO_IN;
 using Common.DTO_OUT;
+using System.Text.RegularExpressions;
 
-namespace BL.PedidoManagmentService
+namespace BL.PedidoManagementService
 {
     public class PedidoManagementService : IPedidoManagementService
     {
-        //private readonly OperativeDBContext _db;
-
         public PedidoManagementService()
         {
         }
 
-        #region PUBLIC
+        #region Public
 
-        #region GET
-        //public List<ArticuloDTO_OUT> ObtenerTodosLosArticulos()
-        //{
-        //    List<AgrupacionDTO_OUT> list = _db.Agrupacion
-        //        .Where(x => !x.Eliminado)
-        //        .Select(x => new AgrupacionDTO_OUT(x))
-        //        .ToList();
+        #region POST
+        public bool ValidarPedido(PedidoDTO_IN dto_in)
+        {
+            bool isvalid = true;
 
-        //    return list;
-        //}
+            // si no tiene vendedor, lo considero erroneo
+            if (dto_in.idVendedor == 0)
+                isvalid = false;
+
+            if (dto_in.articulos != null || dto_in.articulos?.Count() > 0)
+            {
+                string pattern = @"^[a-zA-ZÀ-ÿ0-9., ]*$"; // pattern para validar que tenga solo caracteres
+
+                foreach (ArticuloDTO_IN articulo in dto_in.articulos)
+                {
+                    if(!Regex.IsMatch(articulo.Descripcion, pattern) || articulo.Precio <= 0)
+                        isvalid = false;
+                }
+            }
+            else
+            {
+                //si no tiene articulos, lo considero erroneo
+                isvalid = false;
+            }
+
+            return isvalid;
+        }
 
         #endregion
+
         #endregion
 
     }

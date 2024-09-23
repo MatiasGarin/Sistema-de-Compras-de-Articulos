@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTO_IN\" />
     <Folder Include="Archivos\" />
   </ItemGroup>
 

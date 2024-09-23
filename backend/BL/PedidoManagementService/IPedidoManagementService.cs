@@ -1,15 +1,10 @@
 ﻿
-using Common.DTO_OUT;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Common.DTO_IN;
 
 namespace BL.PedidoManagementService
 {
     public interface IPedidoManagementService
     {
-        //List<ArticuloDTO_OUT> ObtenerTodosLosArticulos();
+        bool ValidarPedido(PedidoDTO_IN pedidoDTO_IN);
     }
 }

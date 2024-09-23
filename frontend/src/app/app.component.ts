@@ -1,70 +1,81 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Articulo } from './core/models/articulo';
-import { Vendedor } from './core/models/vendedor';
+import { Vendedor, VendedorDTO_OUT } from './core/models/vendedor';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { ArticuloService } from './core/services/articulos.service';
 import { VendedorService } from './core/services/vendedores.service';
+import { PedidoService } from './core/services/pedidos.service';
+import { PedidoDTO_IN } from './core/models/pedido';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, ],
+  imports: [RouterOutlet, CommonModule, FormsModule,],   
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 
 export class AppComponent implements OnInit {
+displayedColumns: any;
+isAllSelected(): unknown {
+throw new Error('Method not implemented.');
+}
+masterToggle() {
+throw new Error('Method not implemented.');
+}
   title = 'frontend';
 
   articulos: Articulo[] = [];
   vendedores: Vendedor[] = [];
   vendedorSeleccionado: number | null = null;
+  seleccionados: any[] = [];
+  mostrarError: boolean = false;
 
-  constructor(private _articuloService: ArticuloService, private _vendedorService: VendedorService) {}
+  constructor(private _articuloService: ArticuloService, private _vendedorService: VendedorService, private _pedidoService: PedidoService) {}
 
 
   ngOnInit() {
-    // Aquí normalmente cargarías los datos desde un servicio
+    // cargo los datos desde el servicio de cada uno
     this.cargarArticulos();
     this.cargarVendedores();
   }
 
   cargarArticulos() {
-    // this._articuloService.getAllArticulos().then((articulos) => {
-    //   console.log("api: ",articulos)
-    //   this.articulos = articulos;
-    // })
-    // Simulación de carga de datos
-    this.articulos = [
-      { codigo: 'K1020', descripcion: 'Colchon Telgo', precio: 10256.12, deposito: 1, seleccionado: false },
-      { codigo: 'K1022', descripcion: 'Colchon Seally', precio: 18256.12, deposito: 4, seleccionado: false },
-      { codigo: 'K1024', descripcion: 'Sommier Telgo', precio: 14256.12, deposito: 1, seleccionado: false },
-      { codigo: 'K1026', descripcion: 'Sommier Seally', precio: 13256.12, deposito: 1, seleccionado: false },
-      { codigo: 'F1026', descripcion: 'Almohada Seally', precio: 3250.12, deposito: 4, seleccionado: false },
-    ];
+    this._articuloService.getAllArticulos().then((articulos) => {
+      // realizo el filtrado de los articulos del deposito 1
+      this.articulos = articulos.filter(a => a.deposito == 1);
+    })
   }
 
   cargarVendedores() {
-    // this._vendedorService.getAllArticulos().then((vendedores) => {
-    //   console.log("api: ",vendedores)
-    //   this.vendedores = vendedores;
-    // })
-
-    // Simulación de carga de vendedores
-    this.vendedores = [
-      { id: 1, descripcion: 'Juan Pérez' },
-      { id: 2, descripcion: 'María García' },
-      { id: 3, descripcion: 'Carlos López' },
-    ];
+    this._vendedorService.getAllVendedores().then((vendedores) => {
+      this.vendedores = vendedores;
+    });
   }
 
   procesarSeleccionados() {
-    const seleccionados = this.articulos.filter(a => a.seleccionado);
-    console.log('Artículos seleccionados:', seleccionados);
-    console.log('Vendedor seleccionado:', this.vendedorSeleccionado);
-    // Aquí puedes agregar la lógica para procesar los artículos seleccionados
+    this.seleccionados = this.articulos.filter(a => a.seleccionado);
+
+    if(this.seleccionados.length == 0 || this.vendedorSeleccionado == 0)
+      this.mostrarError = true;
+    
+    let pedido:PedidoDTO_IN = this.generarPedido();
+
+    this._pedidoService.validarPedido(pedido).then((response) => {
+      let mensaje = response.toString() == 'true' ? "OK" : "Contiene errores"
+      alert("Validacion del pedido: "+ mensaje);
+    });
+  }
+
+  generarPedido(): PedidoDTO_IN {
+    let res:PedidoDTO_IN = new PedidoDTO_IN();
+
+    res.idVendedor = this.vendedorSeleccionado ? this.vendedorSeleccionado : 0;
+    res.articulos = this.seleccionados;
+
+    return res;
   }
 }

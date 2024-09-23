@@ -7,5 +7,9 @@ export const ENDPOINTS = {
 
     //Certificado
     VENDEDOR: 'Vendedor',
+
+    //Certificado
+    PEDIDO: 'Pedido',
+    VALIDAR_PEDIDO: 'Pedido/ValidarPedido',
   };
   
